@@ -1,0 +1,26 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.flex-container {
+  display: flex;
+  background-color: #f1f1f1;
+  flex-direction: column;
+  height: 100%;
+  align-items: stretch;
+}
+
+.flex-container > div {
+  background-color: greenyellow;
+  margin: 10px;
+  text-align: center;
+  font-size: 30px;
+  flex-grow: 1;
+}
