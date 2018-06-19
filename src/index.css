@@ -15,12 +15,19 @@ html, body {
   flex-direction: column;
   height: 100%;
   align-items: stretch;
+  justify-content: center;
 }
 
-.flex-container > div {
-  background-color: greenyellow;
-  margin: 10px;
+.timer-bar {
+  height: 5px;
+  flex-grow: unset;
+  background-color: lightskyblue;
+}
+
+.remaining-time {
   text-align: center;
   font-size: 30px;
   flex-grow: 1;
+  justify-content: center;
+  background-color: white;
 }
