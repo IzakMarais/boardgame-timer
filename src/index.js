@@ -4,9 +4,9 @@ import './index.css';
 
 /*
 TODO
-    central play/pause button
     player colors defined in state
-    have remainingTimeColorModify Player color
+    have playerColor pulse slowly when active. Pulse faster when time out.
+        https://css-tricks.com/almanac/properties/a/animation/
 */
 
 function PlayerTimer(props) {
@@ -41,6 +41,9 @@ class TimerList extends React.Component {
     tick() {
         const activeTimer = this.state.activeTimer;
         if (activeTimer==null) {
+            return
+        }
+        if (this.props.isPaused) {
             return
         }
         let timers = this.state.timers.slice();
@@ -86,9 +89,32 @@ class TimerList extends React.Component {
     }
 }
 
+function PauseButton(props) {
+    return <div className="sidebar" onClick={props.onClick}>▌▌</div>;
+}
+
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isPaused:false,
+        }
+    }
+
+    togglePaused() {
+        this.setState({isPaused:!this.state.isPaused})
+    }
+
     render() {
-        return <TimerList playerCount={3}/>;
+        return (
+            <div className="game-in-progress-screen">
+                <PauseButton onClick={()=>this.togglePaused()}/>
+                <TimerList
+                    playerCount={3}
+                    isPaused={this.state.isPaused}
+                />
+            </div>
+        );
     }
 }
 

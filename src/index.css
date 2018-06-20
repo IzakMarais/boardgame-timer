@@ -9,25 +9,40 @@ html, body {
   height: 100%;
 }
 
+.game-in-progress-screen {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.sidebar {
+  flex-grow: 1;
+  background-color: lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 30px;
+}
+
 .flex-container {
   display: flex;
-  background-color: #f1f1f1;
+  background-color:lightgray;
   flex-direction: column;
-  height: 100%;
-  align-items: stretch;
-  justify-content: center;
+  flex-grow: 9;
 }
 
 .timer-bar {
   height: 5px;
-  flex-grow: unset;
   background-color: lightskyblue;
 }
 
 .remaining-time {
-  text-align: center;
   font-size: 30px;
   flex-grow: 1;
-  justify-content: center;
   background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
