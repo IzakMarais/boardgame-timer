@@ -83,6 +83,7 @@ class TimerList extends React.Component {
                     maxMs={this.state.timers[i].maxMs}
                     remainingMs={this.state.timers[i].remainingMs}
                     isActive={isActive}
+                    key={i}
                 />));
         }
         return <div className="flex-container">{timers}</div>;
@@ -90,7 +91,29 @@ class TimerList extends React.Component {
 }
 
 function PauseButton(props) {
-    return <div className="sidebar" onClick={props.onClick}>▌▌</div>;
+    let icon = "▌▌";
+    if (props.paused) {
+        icon = "▶";
+    }
+    return <div className="pause-button" onClick={props.onClick}>{icon}</div>;
+}
+
+function SettingsButton(props) {
+    return <div className="settings-button" onClick={props.onClick}>⚙</div>;
+}
+
+function Settings(props) {
+    return (
+        <div className="flex-container">
+            <form className="settings" onSubmit={props.onSubmit}>
+                <label> Player Count:
+                    <input type="number" min="2" max="8" value={props.playerCount} onChange={props.onPlayerCountChange}/>
+                </label>
+                <br />
+                <input type="submit" value="OK"/>
+            </form>
+        </div>
+    );
 }
 
 class App extends React.Component {
@@ -98,21 +121,57 @@ class App extends React.Component {
         super(props);
         this.state = {
             isPaused:false,
+            isSettingsOpen:true,
+            playerCount: 4,
         }
+    }
+
+    handlePlayerCount(event){
+        this.setState({playerCount:parseFloat(event.target.value)});
+    }
+
+    handlSettings(event){
+        event.preventDefault();
+        this.setState({isSettingsOpen:false});
     }
 
     togglePaused() {
         this.setState({isPaused:!this.state.isPaused})
     }
 
+    toggleSettings() {
+        this.setState({isSettingsOpen:!this.state.isSettingsOpen})
+    }
+
+    renderTimerOrSettings() {
+        if (this.state.isSettingsOpen) {
+            return (
+                <Settings
+                    playerCount={this.state.playerCount}
+                    onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
+                    onSubmit={(e)=>this.handlSettings(e)}
+                />
+            );
+        }
+        return (
+            <TimerList
+                playerCount={this.state.playerCount}
+                isPaused={this.state.isPaused}
+            />
+        );
+    }
+
     render() {
         return (
-            <div className="game-in-progress-screen">
-                <PauseButton onClick={()=>this.togglePaused()}/>
-                <TimerList
-                    playerCount={3}
-                    isPaused={this.state.isPaused}
-                />
+            <div className="app">
+                <div className="sidebar">
+                    <SettingsButton onClick={()=>this.toggleSettings()}/>
+                    <PauseButton
+                        onClick={()=>this.togglePaused()}
+                        paused={this.state.isPaused}
+                    />
+                </div>
+                {this.renderTimerOrSettings()}
             </div>
         );
     }

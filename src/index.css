@@ -9,32 +9,52 @@ html, body {
   height: 100%;
 }
 
-.game-in-progress-screen {
+.app {
   display: flex;
   flex-direction: row;
   height: 100%;
 }
 
 .sidebar {
-  flex-grow: 1;
-  background-color: lightgray;
+  width: 100px;
   display: flex;
+  font-size: 30px;
+  flex-direction: column;
+}
+
+.settings-button {
+  background-color: lightgrey;
+  display: flex;
+  flex-grow: 1;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 30px;
+}
+
+.pause-button {
+  background-color:gray;
+  display: flex;
+  flex-grow: 9;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .flex-container {
   display: flex;
   background-color:lightgray;
   flex-direction: column;
-  flex-grow: 9;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.settings {
+  padding: 100px;
 }
 
 .timer-bar {
   height: 5px;
-  background-color: lightskyblue;
+  background-color: gray;
 }
 
 .remaining-time {
