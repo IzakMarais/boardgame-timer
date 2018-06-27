@@ -18,7 +18,6 @@ html, body {
 .sidebar {
   width: 100px;
   display: flex;
-  font-size: 30px;
   flex-direction: column;
 }
 

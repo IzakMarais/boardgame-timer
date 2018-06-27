@@ -34,15 +34,12 @@ class TimerList extends React.Component {
                 remainingMs:10000,
                 maxMs:10000
             })),
-            activeTimer:null,
+            activeTimer:0,
         }
     }
 
     tick() {
         const activeTimer = this.state.activeTimer;
-        if (activeTimer==null) {
-            return
-        }
         if (this.props.isPaused) {
             return
         }
@@ -90,16 +87,38 @@ class TimerList extends React.Component {
     }
 }
 
-function PauseButton(props) {
-    let icon = "▌▌";
+function Icon(props) {
+    let style={};
+    if (props.size==="large") {
+        style={fontSize:"48px"};
+    }
+    if (props.size==="medium") {
+        style={fontSize:"36px"};
+    }
+    if (props.size==="small") {
+        style={fontSize:"24px"};
+    }
+    if (props.size==="tiny") {
+        style={fontSize:"18px"};
+    }
+
+    return <i className="material-icons" style={style}>{props.name}</i>;
+}
+
+function PlayPauseButton(props) {
+    let icon = <Icon name="pause_circle_outline" size="large"/>;
     if (props.paused) {
-        icon = "▶";
+        icon = <Icon name="play_circle_outline" size="large"/>;
     }
     return <div className="pause-button" onClick={props.onClick}>{icon}</div>;
 }
 
 function SettingsButton(props) {
-    return <div className="settings-button" onClick={props.onClick}>⚙</div>;
+    return (
+        <div className="settings-button" onClick={props.onClick}>
+            <Icon name="settings" size="large"/>
+        </div>
+    );
 }
 
 function Settings(props) {
@@ -107,7 +126,10 @@ function Settings(props) {
         <div className="flex-container">
             <form className="settings" onSubmit={props.onSubmit}>
                 <label> Player Count:
-                    <input type="number" min="2" max="8" value={props.playerCount} onChange={props.onPlayerCountChange}/>
+                    <input type="number" min="2" max="8"
+                        value={props.playerCount}
+                        onChange={props.onPlayerCountChange}
+                    />
                 </label>
                 <br />
                 <input type="submit" value="OK"/>
@@ -120,7 +142,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isPaused:false,
+            isPaused:true,
             isSettingsOpen:true,
             playerCount: 4,
         }
@@ -130,17 +152,34 @@ class App extends React.Component {
         this.setState({playerCount:parseFloat(event.target.value)});
     }
 
-    handlSettings(event){
+    handleSubmit(event){
         event.preventDefault();
+        this.closeSettings();
+    }
+
+    closeSettings() {
         this.setState({isSettingsOpen:false});
     }
 
+    openSettings() {
+        //also Pause when opening settings
+        this.setState({isSettingsOpen:true, isPaused: true});
+    }
+
     togglePaused() {
+        //can't play while settings is open
+        if (this.state.isSettingsOpen) {
+            return
+        }
         this.setState({isPaused:!this.state.isPaused})
     }
 
     toggleSettings() {
-        this.setState({isSettingsOpen:!this.state.isSettingsOpen})
+        if (this.state.isSettingsOpen) {
+            this.closeSettings();
+        } else {
+            this.openSettings();
+        }
     }
 
     renderTimerOrSettings() {
@@ -149,7 +188,7 @@ class App extends React.Component {
                 <Settings
                     playerCount={this.state.playerCount}
                     onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
-                    onSubmit={(e)=>this.handlSettings(e)}
+                    onSubmit={(e)=>this.handleSubmit(e)}
                 />
             );
         }
@@ -166,7 +205,7 @@ class App extends React.Component {
             <div className="app">
                 <div className="sidebar">
                     <SettingsButton onClick={()=>this.toggleSettings()}/>
-                    <PauseButton
+                    <PlayPauseButton
                         onClick={()=>this.togglePaused()}
                         paused={this.state.isPaused}
                     />
