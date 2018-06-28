@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+import { CSSTransition } from 'react-transition-group';
+
 /*
 TODO
     player colors defined in state
@@ -20,7 +22,16 @@ function PlayerTimer(props) {
     return (
         <div className="flex-container" style={activeStyle}>
             <div className="timer-bar" style={{width:percentage}}/>
-            <div className="remaining-time" onClick={props.onClick}>{remainingSec}</div>
+                <CSSTransition
+                    in={props.isActive}
+                    timeout={300}
+                    classNames="time-font"
+                    appear={true}
+                >
+                    <div className="remaining-time" onClick={props.onClick}>
+                        {remainingSec}
+                    </div>
+                </CSSTransition>
         </div>
     );
 }
