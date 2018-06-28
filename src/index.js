@@ -13,14 +13,14 @@ function PlayerTimer(props) {
     const width = props.remainingMs / props.maxMs * 100;
     const percentage = width+"%";
     const remainingSec = Math.ceil(props.remainingMs/1000);
-    let remainingTimeColor={};
+    let activeStyle={};
     if (props.isActive) {
-        remainingTimeColor={backgroundColor:"yellow"}
+        activeStyle={flexGrow:1.5}
     }
     return (
-        <div className="flex-container">
+        <div className="flex-container" style={activeStyle}>
             <div className="timer-bar" style={{width:percentage}}/>
-            <div className="remaining-time" onClick={props.onClick} style={remainingTimeColor}>{remainingSec}</div>
+            <div className="remaining-time" onClick={props.onClick}>{remainingSec}</div>
         </div>
     );
 }
@@ -132,7 +132,7 @@ function Settings(props) {
                     />
                 </label>
                 <br />
-                <input type="submit" value="OK"/>
+                <input type="submit" value="Close Settings"/>
             </form>
         </div>
     );
