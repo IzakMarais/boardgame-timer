@@ -2,14 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-import { CSSTransition } from 'react-transition-group';
-
 /*
 TODO
-    player colors defined in state
-    have playerColor pulse slowly when active. Pulse faster when time out.
-        https://css-tricks.com/almanac/properties/a/animation/
+Try to achieve animation using only CSS transitions, not reactTransisionGroup
+https://medium.com/@bjorn.holdt/react-animations-101-css-transitions-9c1050c2bc9d
+vs
+http://reactcommunity.org/react-transition-group/css-transition
+player colors defined in state
+have playerColor pulse slowly when active. Pulse faster when time out.
+https://css-tricks.com/almanac/properties/a/animation/
 */
+
+let timeStep = 100;
 
 function PlayerTimer(props) {
     const width = props.remainingMs / props.maxMs * 100;
@@ -17,21 +21,18 @@ function PlayerTimer(props) {
     const remainingSec = Math.ceil(props.remainingMs/1000);
     let activeStyle={};
     if (props.isActive) {
-        activeStyle={flexGrow:1.5}
+        activeStyle={flexGrow:1.5};
     }
+    let timerBarStyle = {
+        width:percentage,
+        transition:"width "+timeStep+"ms linear"
+    };
     return (
         <div className="flex-container" style={activeStyle}>
-            <div className="timer-bar" style={{width:percentage}}/>
-                <CSSTransition
-                    in={props.isActive}
-                    timeout={300}
-                    classNames="time-font"
-                    appear={true}
-                >
-                    <div className="remaining-time" onClick={props.onClick}>
-                        {remainingSec}
-                    </div>
-                </CSSTransition>
+            <div className="timer-bar" style={timerBarStyle}/>
+                <div className="remaining-time" onClick={props.onClick}>
+                    {remainingSec}
+                </div>
         </div>
     );
 }
@@ -56,12 +57,12 @@ class TimerList extends React.Component {
         }
         let timers = this.state.timers.slice();
         const activeRemaining = timers[activeTimer].remainingMs;
-        timers[activeTimer].remainingMs = Math.max(0,activeRemaining-50);
+        timers[activeTimer].remainingMs = Math.max(0,activeRemaining-timeStep);
         this.setState({timers:timers});
     }
 
     componentDidMount() {
-        this.timerID = setInterval(() => this.tick(), 50);
+        this.timerID = setInterval(() => this.tick(), timeStep);
     }
 
     componentWillUnmount() {
@@ -127,7 +128,7 @@ function PlayPauseButton(props) {
 function SettingsButton(props) {
     return (
         <div className="settings-button" onClick={props.onClick}>
-            <Icon name="settings" size="large"/>
+            <Icon name="settings" size="medium"/>
         </div>
     );
 }
