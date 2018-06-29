@@ -10,16 +10,22 @@ html, body {
   height: 100%;
 }
 
-.app {
+
+.fillscreen {
   display: flex;
   flex-direction: row;
   height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .sidebar {
   width: 100px;
   display: flex;
   flex-direction: column;
+  z-index: 2;
 }
 
 .settings-button {
@@ -49,9 +55,28 @@ html, body {
   transition: flex-grow 400ms ease-in-out;
 }
 
-.settings {
-  padding: 100px;
+#settings {
+  width: 100%;
+  background-color: lightgray;
+  height: 100%;
+  /* padding: 100px; */
   line-height: 2em;
+  position: absolute;
+  transform: translateX(-100%);
+  transition: transform 400ms ease-in;
+  z-index: 1;
+}
+
+#settings.slideIn {
+  transform: translateX(0);
+}
+
+#settings.slideOut {
+  transform: translateX(-100%)
+}
+
+#settings-form {
+  padding: 200px;
 }
 
 .timer-bar {

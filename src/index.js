@@ -4,13 +4,9 @@ import './index.css';
 
 /*
 TODO
-Try to achieve animation using only CSS transitions, not reactTransisionGroup
-https://medium.com/@bjorn.holdt/react-animations-101-css-transitions-9c1050c2bc9d
-vs
-http://reactcommunity.org/react-transition-group/css-transition
-player colors defined in state
-have playerColor pulse slowly when active. Pulse faster when time out.
-https://css-tricks.com/almanac/properties/a/animation/
+    * move timer list state up so that it can update when playerCountChanges
+    * player colors defined in state
+    * have playerColor pulse slowly when active. Pulse faster when time out.
 */
 
 let timeStep = 100;
@@ -135,16 +131,14 @@ function SettingsButton(props) {
 
 function Settings(props) {
     return (
-        <div className="flex-container">
-            <form className="settings" onSubmit={props.onSubmit}>
+        <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
+            <form id="settings-form" onSubmit={props.onSubmit}>
                 <label> Player Count:
                     <input type="number" min="2" max="8"
                         value={props.playerCount}
                         onChange={props.onPlayerCountChange}
                     />
                 </label>
-                <br />
-                <input type="submit" value="Close Settings"/>
             </form>
         </div>
     );
@@ -162,11 +156,6 @@ class App extends React.Component {
 
     handlePlayerCount(event){
         this.setState({playerCount:parseFloat(event.target.value)});
-    }
-
-    handleSubmit(event){
-        event.preventDefault();
-        this.closeSettings();
     }
 
     closeSettings() {
@@ -194,36 +183,28 @@ class App extends React.Component {
         }
     }
 
-    renderTimerOrSettings() {
-        if (this.state.isSettingsOpen) {
-            return (
-                <Settings
-                    playerCount={this.state.playerCount}
-                    onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
-                    onSubmit={(e)=>this.handleSubmit(e)}
-                />
-            );
-        }
-        return (
-            <TimerList
-                playerCount={this.state.playerCount}
-                isPaused={this.state.isPaused}
-            />
-        );
-    }
-
     render() {
         return (
-            <div className="app">
-                <div className="sidebar">
-                    <SettingsButton onClick={()=>this.toggleSettings()}/>
-                    <PlayPauseButton
-                        onClick={()=>this.togglePaused()}
-                        paused={this.state.isPaused}
+            <React.Fragment>
+                <div className="fillscreen">
+                    <div className="sidebar">
+                        <SettingsButton onClick={()=>this.toggleSettings()}/>
+                        <PlayPauseButton
+                            onClick={()=>this.togglePaused()}
+                            paused={this.state.isPaused}
+                        />
+                    </div>
+                    <TimerList
+                        playerCount={this.state.playerCount}
+                        isPaused={this.state.isPaused}
                     />
                 </div>
-                {this.renderTimerOrSettings()}
-            </div>
+                <Settings
+                    open={this.state.isSettingsOpen}
+                    playerCount={this.state.playerCount}
+                    onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
+                />
+            </React.Fragment>
         );
     }
 }
