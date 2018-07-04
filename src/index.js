@@ -4,57 +4,34 @@ import './index.css';
 
 /*
 TODO
-    * move timer list state up so that it can update when playerCountChanges
-    * player colors defined in state
-    * have playerColor pulse slowly when active. Pulse faster when time out.
+    move timer list state up so that it can update when playerCountChanges
+        try componentWillReceiveProps instead
+        also allows timer state down to PlayerTimer
+
+
+    player colors defined in state
+    have playerColor pulse slowly when active. Pulse faster when time out.
 */
 
 let timeStep = 100;
 
-function PlayerTimer(props) {
-    const width = props.remainingMs / props.maxMs * 100;
-    const percentage = width+"%";
-    const remainingSec = Math.ceil(props.remainingMs/1000);
-    let activeStyle={};
-    if (props.isActive) {
-        activeStyle={flexGrow:1.5};
-    }
-    let timerBarStyle = {
-        width:percentage,
-        transition:"width "+timeStep+"ms linear"
-    };
-    return (
-        <div className="flex-container" style={activeStyle}>
-            <div className="timer-bar" style={timerBarStyle}/>
-                <div className="remaining-time" onClick={props.onClick}>
-                    {remainingSec}
-                </div>
-        </div>
-    );
-}
-
-class TimerList extends React.Component {
+class PlayerTimer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            //fill().map() syntax required to fill with unique object instances
-            timers:Array(this.props.playerCount).fill().map(u => ({
-                remainingMs:10000,
-                maxMs:10000
-            })),
-            activeTimer:0,
+            remainingMs: this.props.maxMs
         }
     }
 
     tick() {
-        const activeTimer = this.state.activeTimer;
         if (this.props.isPaused) {
             return
         }
-        let timers = this.state.timers.slice();
-        const activeRemaining = timers[activeTimer].remainingMs;
-        timers[activeTimer].remainingMs = Math.max(0,activeRemaining-timeStep);
-        this.setState({timers:timers});
+        if (!this.props.isActive) {
+            return
+        }
+        const activeRemaining = this.state.remainingMs;
+        this.setState({remainingMs:Math.max(0,activeRemaining-timeStep)});
     }
 
     componentDidMount() {
@@ -63,6 +40,37 @@ class TimerList extends React.Component {
 
     componentWillUnmount() {
         clearInterval(this.timerID);
+    }
+
+    render() {
+        const width = this.state.remainingMs / this.props.maxMs * 100;
+        const percentage = width+"%";
+        const remainingSec = Math.ceil(this.state.remainingMs/1000);
+        let activeStyle={};
+        if (this.props.isActive) {
+            activeStyle={flexGrow:1.5};
+        }
+        let timerBarStyle = {
+            width:percentage,
+            transition:"width "+timeStep+"ms linear"
+        };
+        return (
+            <div className="flex-container" style={activeStyle}>
+                <div className="timer-bar" style={timerBarStyle}/>
+                    <div className="remaining-time" onClick={this.props.onClick}>
+                        {remainingSec}
+                    </div>
+            </div>
+        );
+    }
+}
+
+class TimerList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeTimer:0,
+        }
     }
 
     handleClick(i) {
@@ -85,9 +93,9 @@ class TimerList extends React.Component {
             timers.push(
                 (<PlayerTimer
                     onClick={() => this.handleClick(i)}
-                    maxMs={this.state.timers[i].maxMs}
-                    remainingMs={this.state.timers[i].remainingMs}
+                    maxMs={10000}
                     isActive={isActive}
+                    isPaused={this.props.isPaused}
                     key={i}
                 />));
         }
