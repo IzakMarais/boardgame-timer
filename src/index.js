@@ -4,12 +4,7 @@ import './index.css';
 
 /*
 TODO
-    move timer list state up so that it can update when playerCountChanges
-        try componentWillReceiveProps instead
-        also allows timer state down to PlayerTimer
-
-
-    player colors defined in state
+   player colors defined in state
     have playerColor pulse slowly when active. Pulse faster when time out.
 */
 
@@ -65,42 +60,23 @@ class PlayerTimer extends React.Component {
     }
 }
 
-class TimerList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTimer:0,
+function TimerList(props) {
+    let timers = [];
+    for (let i = 0; i < props.playerCount; i++) {
+        let isActive=false;
+        if (props.activePlayer===i) {
+            isActive=true;
         }
+        timers.push(
+            (<PlayerTimer
+                onClick={() => props.handleClick(i)}
+                maxMs={10000}
+                isActive={isActive}
+                isPaused={props.isPaused}
+                key={i}
+            />));
     }
-
-    handleClick(i) {
-        //by default clicking on a player makes her active
-        let nextActive = i;
-        //unless that player is already active, in which case the next in line becomes active
-        if (this.state.activeTimer === i) {
-            nextActive = (i+1)%this.props.playerCount;
-        }
-        this.setState({activeTimer:nextActive});
-    }
-
-    render() {
-        let timers = [];
-        for (let i = 0; i < this.props.playerCount; i++) {
-            let isActive=false;
-            if (this.state.activeTimer===i) {
-                isActive=true;
-            }
-            timers.push(
-                (<PlayerTimer
-                    onClick={() => this.handleClick(i)}
-                    maxMs={10000}
-                    isActive={isActive}
-                    isPaused={this.props.isPaused}
-                    key={i}
-                />));
-        }
-        return <div className="flex-container">{timers}</div>;
-    }
+    return <div className="flex-container">{timers}</div>;
 }
 
 function Icon(props) {
@@ -159,11 +135,25 @@ class App extends React.Component {
             isPaused:true,
             isSettingsOpen:true,
             playerCount: 4,
+            activePlayer:0,
         }
     }
 
+    handleTimerListClick(i) {
+        //by default clicking on a player makes her active
+        let nextActive = i;
+        //unless that player is already active, in which case the next in line becomes active
+        if (this.state.activePlayer === i) {
+            nextActive = (i+1)%this.state.playerCount;
+        }
+        this.setState({activePlayer:nextActive});
+    }
+
     handlePlayerCount(event){
-        this.setState({playerCount:parseFloat(event.target.value)});
+        this.setState({
+            playerCount:parseFloat(event.target.value),
+            activePlayer:0
+        });
     }
 
     closeSettings() {
@@ -205,6 +195,8 @@ class App extends React.Component {
                     <TimerList
                         playerCount={this.state.playerCount}
                         isPaused={this.state.isPaused}
+                        activePlayer={this.state.activePlayer}
+                        handleClick={(i)=>this.handleTimerListClick(i)}
                     />
                 </div>
                 <Settings
