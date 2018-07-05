@@ -128,7 +128,7 @@ function SettingsButton(props) {
 function Settings(props) {
     return (
         <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
-            <form id="settings-form" onSubmit={props.onSubmit}>
+            <form id="settings-form">
                 <label> Player Count:
                     <input type="number" min="2" max="8"
                         value={props.playerCount}
