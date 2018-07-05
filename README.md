@@ -1,7 +1,11 @@
 # Boardgame timer app
 
-A timer app for multi-player boardgames.
+A timer single page web app for multi-player boardgames.
 
-Written in React and runs in the browser.
+Try it out at: https://izakmarais.github.io/boardgame-timer/
 
-This is my first react app. After completing it and hosting it, I want to try porting it to mobile using React native.
+## Project aims
+
+This is something I've wanted to build for a while. I used it to learn a bit of React.
+
+This is my first react app. After completing it, I want to try porting it to mobile using React native.
