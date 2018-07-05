@@ -46,6 +46,24 @@ html, body {
   text-align: center;
 }
 
+.pause-animation-enter {
+  opacity: 0.5;
+}
+
+.pause-animation-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-out;
+}
+
+.pause-animation-exit {
+  opacity: 0.5;
+}
+
+.pause-animation-exit-active {
+  opacity: 1;
+  transition: opacity 500ms ease-out;
+}
+
 .flex-container {
   display: flex;
   background-color:lightgray;

@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+import {CSSTransition} from 'react-transition-group';
+
 /*
 TODO
    player colors defined in state
@@ -98,11 +100,21 @@ function Icon(props) {
 }
 
 function PlayPauseButton(props) {
-    let icon = <Icon name="pause_circle_outline" size="large"/>;
+    let icon = "pause";
     if (props.paused) {
-        icon = <Icon name="play_circle_outline" size="large"/>;
+        icon = "play_arrow";
     }
-    return <div className="pause-button" onClick={props.onClick}>{icon}</div>;
+    return (
+        <CSSTransition
+            in={props.paused}
+            timeout={500}
+            classNames="pause-animation"
+        >
+            <div className="pause-button" onClick={props.onClick}>
+                <Icon name={icon} size="large"/>
+            </div>
+        </CSSTransition>
+    );
 }
 
 function SettingsButton(props) {
