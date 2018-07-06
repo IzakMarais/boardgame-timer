@@ -127,6 +127,20 @@ function SettingsButton(props) {
 }
 
 function Settings(props) {
+    let colorPickers = [];
+    for (let i = 0; i < props.playerCount; i++) {
+        colorPickers.push((
+            <React.Fragment key={i}>
+                <label>Player {i+1}:
+                    <input type="color"
+                        onChange={(e)=>props.onColorChange(i,e)}
+                    />
+                </label>
+                <br />
+            </React.Fragment>
+        ));
+    }
+
     return (
         <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
             <form id="settings-form"  onSubmit={props.onSubmit}>
@@ -136,6 +150,8 @@ function Settings(props) {
                         onChange={props.onPlayerCountChange}
                     />
                 </label>
+                <br />
+                {colorPickers}
             </form>
         </div>
     );
@@ -162,19 +178,32 @@ class App extends React.Component {
         this.setState({activePlayer:nextActive});
     }
 
-    handlePlayerCount(event){
+    handleSettingsPlayerCount(event){
         this.setState({
             playerCount:parseFloat(event.target.value),
             activePlayer:0
         });
     }
 
-    closeSettings() {
-        this.setState({isSettingsOpen:false});
+    handleSettingsColor(i, event) {
+        console.log(i)
+        console.log(event.target.value)
     }
 
     handlSettingsSubmit(event){
         event.preventDefault();
+        this.setState({isSettingsOpen:false});
+    }
+
+    toggleSettings() {
+        if (this.state.isSettingsOpen) {
+            this.closeSettings();
+        } else {
+            this.openSettings();
+        }
+    }
+
+    closeSettings() {
         this.setState({isSettingsOpen:false});
     }
 
@@ -189,14 +218,6 @@ class App extends React.Component {
             return
         }
         this.setState({isPaused:!this.state.isPaused})
-    }
-
-    toggleSettings() {
-        if (this.state.isSettingsOpen) {
-            this.closeSettings();
-        } else {
-            this.openSettings();
-        }
     }
 
     render() {
@@ -220,7 +241,8 @@ class App extends React.Component {
                 <Settings
                     open={this.state.isSettingsOpen}
                     playerCount={this.state.playerCount}
-                    onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
+                    onPlayerCountChange={(e)=>this.handleSettingsPlayerCount(e)}
+                    onColorChange={(i,e)=>this.handleSettingsColor(i,e)}
                     onSubmit={(e)=>this.handlSettingsSubmit(e)}
                 />
             </React.Fragment>
