@@ -6,7 +6,8 @@ import {CSSTransition} from 'react-transition-group';
 
 /*
 TODO
-   player colors defined in state
+    Replace react favicon with hour glass icon
+    player colors defined in state
     have playerColor pulse slowly when active. Pulse faster when time out.
 */
 
@@ -128,7 +129,7 @@ function SettingsButton(props) {
 function Settings(props) {
     return (
         <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
-            <form id="settings-form">
+            <form id="settings-form"  onSubmit={props.onSubmit}>
                 <label> Player Count:
                     <input type="number" min="2" max="8"
                         value={props.playerCount}
@@ -169,6 +170,11 @@ class App extends React.Component {
     }
 
     closeSettings() {
+        this.setState({isSettingsOpen:false});
+    }
+
+    handlSettingsSubmit(event){
+        event.preventDefault();
         this.setState({isSettingsOpen:false});
     }
 
@@ -215,6 +221,7 @@ class App extends React.Component {
                     open={this.state.isSettingsOpen}
                     playerCount={this.state.playerCount}
                     onPlayerCountChange={(e)=>this.handlePlayerCount(e)}
+                    onSubmit={(e)=>this.handlSettingsSubmit(e)}
                 />
             </React.Fragment>
         );
