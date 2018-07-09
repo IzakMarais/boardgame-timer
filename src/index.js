@@ -11,6 +11,16 @@ TODO
 */
 
 let timeStep = 100;
+let defaultPlayerColors = [
+    "#ff0000",
+    "#ffff00",
+    "#00ffff",
+    "#ff00ff",
+    "#0000ff",
+    "#00ff00",
+    "#880000",
+    "#ff0088"
+]
 
 class PlayerTimer extends React.Component {
     constructor(props) {
@@ -43,18 +53,21 @@ class PlayerTimer extends React.Component {
         const width = this.state.remainingMs / this.props.maxMs * 100;
         const percentage = width+"%";
         const remainingSec = Math.ceil(this.state.remainingMs/1000);
-        let activeStyle={};
+        let containerStyle={};
         if (this.props.isActive) {
-            activeStyle={flexGrow:1.5};
+            containerStyle={flexGrow:1.5};
         }
         let timerBarStyle = {
             width:percentage,
             transition:"width "+timeStep+"ms linear"
         };
+        let textBoxStyle = {
+            backgroundColor:this.props.color
+        }
         return (
-            <div className="flex-container" style={activeStyle}>
+            <div className="flex-container" style={containerStyle}>
                 <div className="timer-bar" style={timerBarStyle}/>
-                    <div className="remaining-time" onClick={this.props.onClick}>
+                    <div className="remaining-time" onClick={this.props.onClick} style={textBoxStyle}>
                         {remainingSec}
                     </div>
             </div>
@@ -75,6 +88,7 @@ function TimerList(props) {
                 maxMs={10000}
                 isActive={isActive}
                 isPaused={props.isPaused}
+                color={props.playerColors[i]}
                 key={i}
             />));
     }
@@ -133,6 +147,7 @@ function Settings(props) {
                 <label>Player {i+1}:
                     <input type="color"
                         onChange={(e)=>props.onColorChange(i,e)}
+                        value={props.playerColors[i]}
                     />
                 </label>
                 <br />
@@ -163,7 +178,13 @@ class App extends React.Component {
             isPaused:true,
             isSettingsOpen:true,
             playerCount: 4,
+            playerSettings: [],
             activePlayer:0,
+        }
+        for (let i = 0; i < this.state.playerCount; i++) {
+            this.state.playerSettings.push({
+                color: defaultPlayerColors[i]
+            });
         }
     }
 
@@ -178,15 +199,25 @@ class App extends React.Component {
     }
 
     handleSettingsPlayerCount(event){
+        const playerCount = parseFloat(event.target.value);
+        let playerSettings = this.state.playerSettings.slice(0, playerCount);
+        for (let i = playerSettings.length; i < playerCount; i++) {
+            playerSettings.push({
+                color: defaultPlayerColors[i]
+            })
+        }
+
         this.setState({
-            playerCount:parseFloat(event.target.value),
-            activePlayer:0
+            playerCount:playerCount,
+            activePlayer:0,
+            playerSettings: playerSettings
         });
     }
 
     handleSettingsColor(i, event) {
-        console.log(i)
-        console.log(event.target.value)
+        let playerSettings = this.state.playerSettings.slice()
+        playerSettings[i].color = event.target.value;
+        this.setState({playerSettings:playerSettings})
     }
 
     handlSettingsSubmit(event){
@@ -220,6 +251,7 @@ class App extends React.Component {
     }
 
     render() {
+        const playerColors = this.state.playerSettings.map(s => s.color);
         return (
             <React.Fragment>
                 <div className="fillscreen">
@@ -232,6 +264,7 @@ class App extends React.Component {
                     </div>
                     <TimerList
                         playerCount={this.state.playerCount}
+                        playerColors={playerColors}
                         isPaused={this.state.isPaused}
                         activePlayer={this.state.activePlayer}
                         handleClick={(i)=>this.handleTimerListClick(i)}
@@ -241,6 +274,7 @@ class App extends React.Component {
                     open={this.state.isSettingsOpen}
                     playerCount={this.state.playerCount}
                     onPlayerCountChange={(e)=>this.handleSettingsPlayerCount(e)}
+                    playerColors={playerColors}
                     onColorChange={(i,e)=>this.handleSettingsColor(i,e)}
                     onSubmit={(e)=>this.handlSettingsSubmit(e)}
                 />
