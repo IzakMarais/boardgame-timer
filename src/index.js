@@ -6,7 +6,6 @@ import {CSSTransition} from 'react-transition-group';
 
 /*
 TODO
-    Replace react favicon with hour glass icon
     player colors defined in state
     have playerColor pulse slowly when active. Pulse faster when time out.
 */
