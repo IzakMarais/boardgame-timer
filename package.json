@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://izakmarais.github.io/boardgame-timer/",
   "dependencies": {
+    "colorsys": "^1.0.21",
     "gh-pages": "^1.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

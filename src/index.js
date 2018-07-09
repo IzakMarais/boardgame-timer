@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 import {CSSTransition} from 'react-transition-group';
+import colorsys from 'colorsys';
 
 /*
 TODO
@@ -28,6 +29,18 @@ class PlayerTimer extends React.Component {
         this.state = {
             remainingMs: this.props.maxMs
         }
+    }
+
+    calcTextColor(bgColor) {
+        const rgb = colorsys.parseCss(bgColor);
+        let hsl = colorsys.rgb2Hsl(rgb)
+        let lightness = hsl.l;
+        if (lightness < 50) {
+            lightness = 100;
+        } else {
+            lightness = 0;
+        }
+        return colorsys.hsl2Hex({h:0, s:0, l: lightness});
     }
 
     tick() {
@@ -61,8 +74,10 @@ class PlayerTimer extends React.Component {
             width:percentage,
             transition:"width "+timeStep+"ms linear"
         };
+        const backgroundColor=this.props.color;
         let textBoxStyle = {
-            backgroundColor:this.props.color
+            backgroundColor:backgroundColor,
+            color:this.calcTextColor(backgroundColor)
         }
         return (
             <div className="flex-container" style={containerStyle}>
