@@ -7,7 +7,6 @@ import colorsys from 'colorsys';
 
 /*
 TODO
-    validate input text for playerCount
     button press highlight for timer area
     have playerColor pulse slowly when active. Pulse faster when time out.
     timer settings
@@ -16,8 +15,8 @@ TODO
     firefox icons?
 */
 
-let timeStep = 100;
-let defaultPlayerColors = [
+let TIMESTEP = 100;
+let DEFAULT_PLAYER_COLORS = [
     "#8B0000", //DarkRed
     "#FF8C00", //DarkOrange
     "#FFD700", //Gold
@@ -27,8 +26,8 @@ let defaultPlayerColors = [
     "#FF1493", //DeepPink
     "#800080"  //Purple
 ]
-let minPlayerCount = 2;
-let maxPlayerCount = 8;
+let MIN_PLAYER_COUNT = 2;
+let MAX_PLAYER_COUNT = 8;
 
 
 class PlayerTimer extends React.Component {
@@ -59,11 +58,11 @@ class PlayerTimer extends React.Component {
             return
         }
         const activeRemaining = this.state.remainingMs;
-        this.setState({remainingMs:Math.max(0,activeRemaining-timeStep)});
+        this.setState({remainingMs:Math.max(0,activeRemaining-TIMESTEP)});
     }
 
     componentDidMount() {
-        this.timerID = setInterval(() => this.tick(), timeStep);
+        this.timerID = setInterval(() => this.tick(), TIMESTEP);
     }
 
     componentWillUnmount() {
@@ -80,7 +79,7 @@ class PlayerTimer extends React.Component {
         }
         let timerBarStyle = {
             width:percentage,
-            transition:"width "+timeStep+"ms linear"
+            transition:"width "+TIMESTEP+"ms linear"
         };
         const backgroundColor=this.props.color;
         let textBoxStyle = {
@@ -182,7 +181,7 @@ function Settings(props) {
         <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
             <form id="settings-form"  onSubmit={props.onSubmit}>
                 <label> Player Count:
-                    <input type="number" min={minPlayerCount} max={maxPlayerCount}
+                    <input type="number" min={MIN_PLAYER_COUNT} max={MAX_PLAYER_COUNT}
                         value={props.playerCount}
                         onChange={props.onPlayerCountChange}
                     />
@@ -206,7 +205,7 @@ class App extends React.Component {
         }
         for (let i = 0; i < this.state.playerCount; i++) {
             this.state.playerSettings.push({
-                color: defaultPlayerColors[i]
+                color: DEFAULT_PLAYER_COLORS[i]
             });
         }
     }
@@ -223,13 +222,13 @@ class App extends React.Component {
 
     handleSettingsPlayerCount(event){
         let playerCount = parseFloat(event.target.value);
-        playerCount = Math.max(playerCount,minPlayerCount);
-        playerCount = Math.min(playerCount,maxPlayerCount);
+        playerCount = Math.max(playerCount,MIN_PLAYER_COUNT);
+        playerCount = Math.min(playerCount,MAX_PLAYER_COUNT);
 
         let playerSettings = this.state.playerSettings.slice(0, playerCount);
         for (let i = playerSettings.length; i < playerCount; i++) {
             playerSettings.push({
-                color: defaultPlayerColors[i]
+                color: DEFAULT_PLAYER_COLORS[i]
             })
         }
 
