@@ -46,20 +46,20 @@ html, body {
   text-align: center;
 }
 
-.pause-animation-enter {
+.button-animation-enter {
   opacity: 0.5;
 }
 
-.pause-animation-enter-active {
+.button-animation-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-out;
 }
 
-.pause-animation-exit {
+.button-animation-exit {
   opacity: 0.5;
 }
 
-.pause-animation-exit-active {
+.button-animation-exit-active {
   opacity: 1;
   transition: opacity 500ms ease-out;
 }

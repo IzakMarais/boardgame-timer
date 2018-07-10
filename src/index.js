@@ -7,12 +7,11 @@ import colorsys from 'colorsys';
 
 /*
 TODO
-    button press highlight for timer area
-    have playerColor pulse slowly when active. Pulse faster when time out.
+    Pulse faster when time is up? Make sound?
     timer settings
     Player names in state
     Style form input
-    firefox icons?
+    Fix: firefox icons?
 */
 
 let TIMESTEP = 100;
@@ -73,6 +72,14 @@ class PlayerTimer extends React.Component {
         const width = this.state.remainingMs / this.props.maxMs * 100;
         const percentage = width+"%";
         const remainingSec = Math.ceil(this.state.remainingMs/1000);
+        const backgroundColor=this.props.color;
+        let textBoxStyle = {
+            backgroundColor:backgroundColor,
+            color:this.calcTextColor(backgroundColor),
+        }
+        if (this.props.isActive && !this.props.isPaused) {
+            textBoxStyle.animation="pulse 1s ease-in-out infinite alternate ";
+        }
         let containerStyle={};
         if (this.props.isActive) {
             containerStyle={flexGrow:1.5};
@@ -81,17 +88,19 @@ class PlayerTimer extends React.Component {
             width:percentage,
             transition:"width "+TIMESTEP+"ms linear"
         };
-        const backgroundColor=this.props.color;
-        let textBoxStyle = {
-            backgroundColor:backgroundColor,
-            color:this.calcTextColor(backgroundColor)
-        }
+
         return (
             <div className="flex-container" style={containerStyle}>
                 <div className="timer-bar" style={timerBarStyle}/>
+                <CSSTransition
+                    in={this.props.isActive}
+                    timeout={500}
+                    classNames="button-animation"
+                >
                     <div className="remaining-time" onClick={this.props.onClick} style={textBoxStyle}>
                         {remainingSec}
                     </div>
+                </CSSTransition>
             </div>
         );
     }
@@ -144,7 +153,7 @@ function PlayPauseButton(props) {
         <CSSTransition
             in={props.paused}
             timeout={500}
-            classNames="pause-animation"
+            classNames="button-animation"
         >
             <div className="pause-button" onClick={props.onClick}>
                 <Icon name={icon} size="large"/>
@@ -159,6 +168,17 @@ function SettingsButton(props) {
             <Icon name="settings" size="medium"/>
         </div>
     );
+}
+
+function calcPulseColor(bgColor) {
+    const rgb = colorsys.parseCss(bgColor);
+    let hsl = colorsys.rgb2Hsl(rgb)
+    if (hsl.l < 5) {
+        hsl.l += 5;
+    } else {
+        hsl.l -= 5;
+    }
+    return colorsys.hsl2Hex(hsl);
 }
 
 function Settings(props) {
@@ -208,6 +228,7 @@ class App extends React.Component {
                 color: DEFAULT_PLAYER_COLORS[i]
             });
         }
+        this.setActivePlayer(0);
     }
 
     handleTimerListClick(i) {
@@ -217,7 +238,33 @@ class App extends React.Component {
         if (this.state.activePlayer === i) {
             nextActive = (i+1)%this.state.playerCount;
         }
-        this.setState({activePlayer:nextActive});
+        this.setActivePlayer(nextActive);
+    }
+
+    setActivePlayer(i) {
+        this.setState({activePlayer:i});
+        this.setActivePlayerPulseColors(i);
+    }
+
+    setActivePlayerPulseColors(i) {
+        //modify DOM to change css pulse animation colors to match current player color.
+        //React cannot modify css @keyframes property using idomatic component 'style' property approach
+        const backgroundColor=this.state.playerSettings[i].color;
+        let newAnimation = document.createElement('style');
+        newAnimation.type = 'text/css';
+        newAnimation.id = "pulse-animation";
+        let keyframes =
+        `@keyframes pulse {
+            0% {
+                background-color: ${backgroundColor}
+            }
+            100% {
+                background-color: ${calcPulseColor(backgroundColor)}
+            }
+        }`;
+        newAnimation.appendChild(document.createTextNode(keyframes));
+        let oldAnimation = document.getElementById("pulse-animation");
+        oldAnimation.parentNode.replaceChild(newAnimation, oldAnimation);
     }
 
     handleSettingsPlayerCount(event){
@@ -234,15 +281,18 @@ class App extends React.Component {
 
         this.setState({
             playerCount:playerCount,
-            activePlayer:0,
             playerSettings: playerSettings
         });
+        this.setActivePlayer(0);
     }
 
     handleSettingsColor(i, event) {
         let playerSettings = this.state.playerSettings.slice()
         playerSettings[i].color = event.target.value;
         this.setState({playerSettings:playerSettings})
+        if (i===this.state.activePlayer) {
+            this.setActivePlayerPulseColors(i);
+        }
     }
 
     handlSettingsSubmit(event){
