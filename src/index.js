@@ -27,6 +27,9 @@ let defaultPlayerColors = [
     "#FF1493", //DeepPink
     "#800080"  //Purple
 ]
+let minPlayerCount = 2;
+let maxPlayerCount = 8;
+
 
 class PlayerTimer extends React.Component {
     constructor(props) {
@@ -179,7 +182,7 @@ function Settings(props) {
         <div id="settings" className={props.open ? "slideIn" : "slideOut"}>
             <form id="settings-form"  onSubmit={props.onSubmit}>
                 <label> Player Count:
-                    <input type="number" min="2" max="8"
+                    <input type="number" min={minPlayerCount} max={maxPlayerCount}
                         value={props.playerCount}
                         onChange={props.onPlayerCountChange}
                     />
@@ -219,7 +222,10 @@ class App extends React.Component {
     }
 
     handleSettingsPlayerCount(event){
-        const playerCount = parseFloat(event.target.value);
+        let playerCount = parseFloat(event.target.value);
+        playerCount = Math.max(playerCount,minPlayerCount);
+        playerCount = Math.min(playerCount,maxPlayerCount);
+
         let playerSettings = this.state.playerSettings.slice(0, playerCount);
         for (let i = playerSettings.length; i < playerCount; i++) {
             playerSettings.push({
