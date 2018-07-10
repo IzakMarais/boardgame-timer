@@ -7,20 +7,25 @@ import colorsys from 'colorsys';
 
 /*
 TODO
-    player colors defined in state
+    validate input text for playerCount
+    button press highlight for timer area
     have playerColor pulse slowly when active. Pulse faster when time out.
+    timer settings
+    Player names in state
+    Style form input
+    firefox icons?
 */
 
 let timeStep = 100;
 let defaultPlayerColors = [
-    "#ff0000",
-    "#ffff00",
-    "#00ffff",
-    "#ff00ff",
-    "#0000ff",
-    "#00ff00",
-    "#880000",
-    "#ff0088"
+    "#8B0000", //DarkRed
+    "#FF8C00", //DarkOrange
+    "#FFD700", //Gold
+    "#32CD32", //LimeGreen
+    "#8B4513", //SaddleBrown
+    "#4169E1", //RoyalBlue
+    "#FF1493", //DeepPink
+    "#800080"  //Purple
 ]
 
 class PlayerTimer extends React.Component {
