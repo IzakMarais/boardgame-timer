@@ -10,7 +10,6 @@ html, body {
   height: 100%;
 }
 
-
 .fillscreen {
   display: flex;
   flex-direction: row;
@@ -103,11 +102,35 @@ html, body {
 }
 
 .remaining-time {
+  flex-grow: 1;
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+.remaining-time-text {
   font-size: 30px;
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  z-index: 3;
 }
 
+.remaining-time-pulse-darken {
+  position: absolute;
+  flex-grow: 1;
+  display: flex;
+  background-color: black;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+}
+
+@keyframes pulse {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 0.2;
+  }
+}

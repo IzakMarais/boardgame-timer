@@ -7,11 +7,14 @@ import colorsys from 'colorsys';
 
 /*
 TODO
+    index.js:2178 Warning: Can't call setState on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the App component.
+
+    Animating player colors is too intensive for mobile browser
+
     Pulse faster when time is up? Make sound?
     timer settings
     Player names in state
     Style form input
-    Fix: firefox icons?
 */
 
 let TIMESTEP = 100;
@@ -77,8 +80,9 @@ class PlayerTimer extends React.Component {
             backgroundColor:backgroundColor,
             color:this.calcTextColor(backgroundColor),
         }
+        let pulseIfActive = {opacity:0};
         if (this.props.isActive && !this.props.isPaused) {
-            textBoxStyle.animation="pulse 1s ease-in-out infinite alternate ";
+            pulseIfActive = {animation:"pulse 1s ease-in-out infinite alternate "};
         }
         let containerStyle={};
         if (this.props.isActive) {
@@ -98,7 +102,8 @@ class PlayerTimer extends React.Component {
                     classNames="button-animation"
                 >
                     <div className="remaining-time" onClick={this.props.onClick} style={textBoxStyle}>
-                        {remainingSec}
+                        <div className="remaining-time-pulse-darken" style={pulseIfActive}/>
+                        <div className="remaining-time-text">{remainingSec}</div>
                     </div>
                 </CSSTransition>
             </div>
@@ -170,17 +175,6 @@ function SettingsButton(props) {
     );
 }
 
-function calcPulseColor(bgColor) {
-    const rgb = colorsys.parseCss(bgColor);
-    let hsl = colorsys.rgb2Hsl(rgb)
-    if (hsl.l < 5) {
-        hsl.l += 5;
-    } else {
-        hsl.l -= 5;
-    }
-    return colorsys.hsl2Hex(hsl);
-}
-
 function Settings(props) {
     let colorPickers = [];
     for (let i = 0; i < props.playerCount; i++) {
@@ -228,7 +222,6 @@ class App extends React.Component {
                 color: DEFAULT_PLAYER_COLORS[i]
             });
         }
-        this.setActivePlayer(0);
     }
 
     handleTimerListClick(i) {
@@ -238,33 +231,7 @@ class App extends React.Component {
         if (this.state.activePlayer === i) {
             nextActive = (i+1)%this.state.playerCount;
         }
-        this.setActivePlayer(nextActive);
-    }
-
-    setActivePlayer(i) {
-        this.setState({activePlayer:i});
-        this.setActivePlayerPulseColors(i);
-    }
-
-    setActivePlayerPulseColors(i) {
-        //modify DOM to change css pulse animation colors to match current player color.
-        //React cannot modify css @keyframes property using idomatic component 'style' property approach
-        const backgroundColor=this.state.playerSettings[i].color;
-        let newAnimation = document.createElement('style');
-        newAnimation.type = 'text/css';
-        newAnimation.id = "pulse-animation";
-        let keyframes =
-        `@keyframes pulse {
-            0% {
-                background-color: ${backgroundColor}
-            }
-            100% {
-                background-color: ${calcPulseColor(backgroundColor)}
-            }
-        }`;
-        newAnimation.appendChild(document.createTextNode(keyframes));
-        let oldAnimation = document.getElementById("pulse-animation");
-        oldAnimation.parentNode.replaceChild(newAnimation, oldAnimation);
+        this.setState({activePlayer:nextActive});
     }
 
     handleSettingsPlayerCount(event){
