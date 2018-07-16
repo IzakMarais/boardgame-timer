@@ -108,7 +108,7 @@ html, body {
   z-index: 1;
 }
 .remaining-time-text {
-  font-size: 30px;
+  font-size: 50px;
   flex-grow: 1;
   display: flex;
   align-items: center;
